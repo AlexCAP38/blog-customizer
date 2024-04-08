@@ -1,5 +1,4 @@
 import { SyntheticEvent, useRef, useState } from 'react';
-import clsx from 'clsx';
 import { ArrowButton } from 'components/arrow-button';
 import { Button } from 'components/button';
 import { RadioGroup } from '../radio-group';
@@ -25,7 +24,7 @@ export const ArticleParamsForm = ({
 }: {
 	changeSettings: ChangeSettings;
 }) => {
-	const [stateArrowBtn, setStateArrowBtn] = useState(false); //Состояние стрелки
+	const [isMenuOpen, setIsMenuOpen] = useState(false); //Состояние стрелки
 	const [stateBtn, setBtn] = useState(0); //допстайт для закрытия вне поля
 	const [stateFont, setStateFont] = useState(
 		defaultArticleState.fontFamilyOption
@@ -42,7 +41,7 @@ export const ArticleParamsForm = ({
 	); //Ширина контента
 	const sideBar = useRef(null);
 
-	const resetForm = () => {
+	const handleResetForm = () => {
 		changeSettings(defaultArticleState);
 		setStateFont(defaultArticleState.fontFamilyOption);
 		setstateFontSize(defaultArticleState.fontSizeOption);
@@ -51,7 +50,7 @@ export const ArticleParamsForm = ({
 		setStateWidthContent(defaultArticleState.contentWidth);
 	};
 
-	const applySettings = (event: SyntheticEvent) => {
+	const handleSubmit = (event: SyntheticEvent) => {
 		event.preventDefault();
 
 		changeSettings({
@@ -68,14 +67,14 @@ export const ArticleParamsForm = ({
 	}
 
 	useOutsideClickClose({
-		isOpen: stateArrowBtn,
+		isOpen: isMenuOpen,
 		rootRef: sideBar,
 		onClose: () => {
 			setBtn(stateBtn + 1);
 		},
 		onChange: () => {
 			if (stateBtn === 1) {
-				setStateArrowBtn(false);
+				setIsMenuOpen(false);
 				setBtn(0);
 			}
 		},
@@ -84,18 +83,20 @@ export const ArticleParamsForm = ({
 	return (
 		<>
 			<ArrowButton
-				isOpen={stateArrowBtn}
+				isOpen={isMenuOpen}
 				click={() => {
-					setStateArrowBtn(!stateArrowBtn);
+					setIsMenuOpen(!isMenuOpen);
 				}}
 			/>
 			<aside
 				ref={sideBar}
-				className={clsx(
-					styles.container,
-					stateArrowBtn ? styles.container_open : ''
-				)}>
-				<form className={styles.form} onClick={handleClickForm}>
+				className={`${styles.container} ${
+					isMenuOpen && styles.container_open
+				}`}>
+				<form
+					className={styles.form}
+					onClick={handleClickForm}
+					onSubmit={handleSubmit}>
 					<Text as='h1' size={31} weight={800} uppercase>
 						Задайте параметры
 					</Text>
@@ -132,8 +133,8 @@ export const ArticleParamsForm = ({
 						onChange={(selected) => setStateWidthContent(selected)}
 					/>
 					<div className={styles.bottomContainer}>
-						<Button title='Сбросить' type='reset' onClick={resetForm} />
-						<Button title='Применить' type='submit' onClick={applySettings} />
+						<Button title='Сбросить' type='reset' onClick={handleResetForm} />
+						<Button title='Применить' type='submit' />
 					</div>
 				</form>
 			</aside>
