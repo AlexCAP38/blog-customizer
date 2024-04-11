@@ -39,10 +39,14 @@ export const Select = (props: SelectProps) => {
 	});
 
 	const handleOptionClick = (option: OptionType) => {
+		//Клик по опции внутри селекшен
+
 		setIsOpen(false);
 		onChange?.(option);
 	};
+
 	const handlePlaceHolderClick: MouseEventHandler<HTMLDivElement> = () => {
+		//Клик по Селкшен
 		setIsOpen((isOpen) => !isOpen);
 	};
 
